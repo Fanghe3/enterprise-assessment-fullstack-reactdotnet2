@@ -34,24 +34,27 @@ class App extends React.Component {
     super();
     this.state = {
       view: "feed",
+      selectedItem : 0
     };
 
     this.changeView = this.changeView.bind(this);
   }
 
-  changeView(option) {
+  changeView(option,e ) {
+    console.log(e.currentTarget.parentNode.id);
     this.setState({
       view: option,
+      selectedItem:  e.currentTarget.parentNode.id
     });
   }
 
   renderView() {
-    const { view } = this.state;
+    const { view , selectedItem } = this.state;
 
     if (view === "feed") {
-      return <Feed handleClick={() => this.changeView("anypostview")} />;
+      return <Feed handleClick={(event) => { this.changeView("anypostview", event ); }} />;
     } else {
-      return <Post />;
+      return <Post id={selectedItem} />;
     }
   }
   render() {
