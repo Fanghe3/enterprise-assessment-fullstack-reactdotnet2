@@ -78,7 +78,7 @@ const Feed = (props) => (
                 {" "}
                 {samplePost.author}
               </span>{" "}
-              {moment("20210223", "YYYYMMDD").fromNow()}
+              {moment( samplePost.createdAt , "YYYYMMDD").fromNow()}
             </div>
             <img             
               src={samplePost.imageUrl}

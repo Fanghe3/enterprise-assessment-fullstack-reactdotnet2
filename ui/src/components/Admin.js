@@ -20,7 +20,7 @@ const Admin = (props) => (
                 {" "}
                 {samplePost.author}
               </span>{" "}
-              {moment("20210223", "YYYYMMDD").fromNow()}
+              {moment(samplePost.createdAt, "YYYYMMDD").fromNow()}
             </div>
             <span className="post-list-entry-byline">
               {" "}

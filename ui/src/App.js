@@ -2,7 +2,7 @@ import React from "react";
 
 import Post from "./components/Post";
 import Feed from "./components/Feed";
-import PostBlog from "./components/PostBlog";
+import { Create } from "./components/Create";
 import Admin from "./components/Admin";
 /*
   READ THESE COMMENTS AS A PART OF STEP TWO
@@ -46,7 +46,10 @@ class App extends React.Component {
   changeView(option, e) {    
       this.setState({
         view: option,
-        selectedItem: (option === "feed" || option === "PostBlog" || option === "Admin") ? 0: e.currentTarget.parentNode.id 
+        selectedItem:
+          option === "feed" || option === "Create" || option === "Admin"
+            ? 0
+            : e.currentTarget.parentNode.id,
       });
   }
 
@@ -69,13 +72,17 @@ class App extends React.Component {
     if (view === "Admin") {
       return <Admin blogs={this.state.blogs}  />;
     }
-    if (view === "PostBlog") {
-      return <PostBlog blogs={this.state.blogs}  />;
+    if (view === "Create") {
+
+      console.log("connection", this.props.connection);
+      return (
+        <Create blogs={this.state.blogs} connection={this.props.connection} />
+      );
     }
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:3001/getblogs")
+    fetch(`${this.props.connection}getblogs`)
       .then((response) => response.json())
       .then(
         (result) => {
@@ -108,9 +115,9 @@ class App extends React.Component {
           </span>
           <span
             className={
-              this.state.view === "PostBlog" ? "nav-selected" : "nav-unselected"
+              this.state.view === "Create" ? "nav-selected" : "nav-unselected"
             }
-            onClick={() => this.changeView("PostBlog")}
+            onClick={() => this.changeView("Create")}
           >
             Write a Post
           </span>
