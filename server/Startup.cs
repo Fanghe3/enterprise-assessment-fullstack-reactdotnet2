@@ -12,6 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using server.Models;
+using Microsoft.Extensions.Options;
+using server.Services;
+using server.Interfaces;
+
 
 namespace server
 {
@@ -43,6 +48,15 @@ namespace server
                     builder.AllowAnyHeader();
                 });
             });
+
+            services.AddControllers().AddNewtonsoftJson(o => o.UseMemberCasing());
+            services.Configure<DatabaseSettings>(
+                Configuration.GetSection(nameof(DatabaseSettings))
+            );  
+
+             services.AddSingleton<DatabaseSettings>(sp =>
+                sp.GetRequiredService<DatabaseSettings>());
+            services.AddSingleton<IServicesRepository<Blog>, BlogsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +69,7 @@ namespace server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "server v1"));
             }
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -64,12 +78,21 @@ namespace server
                 app.UseCors("development");
             }
 
-            app.UseAuthorization();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{action=Get}/{id?}");
+                }
+            );
+             
+           /*  app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
+            }); */
         }
     }
 }

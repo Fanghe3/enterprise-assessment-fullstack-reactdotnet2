@@ -2,7 +2,8 @@ import React from "react";
 
 import Post from "./components/Post";
 import Feed from "./components/Feed";
-
+import PostBlog from "./components/PostBlog";
+import Admin from "./components/Admin";
 /*
   READ THESE COMMENTS AS A PART OF STEP TWO
 
@@ -34,29 +35,62 @@ class App extends React.Component {
     super();
     this.state = {
       view: "feed",
-      selectedItem : 0
+      selectedItem: 0,
+      blogs: [],
+      error: null
     };
 
     this.changeView = this.changeView.bind(this);
   }
 
-  changeView(option,e ) {
-    console.log(e.currentTarget.parentNode.id);
-    this.setState({
-      view: option,
-      selectedItem:  e.currentTarget.parentNode.id
-    });
+  changeView(option, e) {    
+      this.setState({
+        view: option,
+        selectedItem: (option === "feed" || option === "PostBlog" || option === "Admin") ? 0: e.currentTarget.parentNode.id 
+      });
   }
 
   renderView() {
-    const { view , selectedItem } = this.state;
+    const { view, selectedItem } = this.state;
 
     if (view === "feed") {
-      return <Feed handleClick={(event) => { this.changeView("anypostview", event ); }} />;
-    } else {
-      return <Post id={selectedItem} />;
+      return (
+        <Feed
+          blogs={this.state.blogs}
+          handleClick={(event) => {
+            this.changeView("onePost", event);
+          }}
+        />
+      );
+    } 
+    if (view === "onePost") {
+      return <Post blogs={this.state.blogs} id={selectedItem} />;
+    }
+    if (view === "Admin") {
+      return <Admin blogs={this.state.blogs}  />;
+    }
+    if (view === "PostBlog") {
+      return <PostBlog blogs={this.state.blogs}  />;
     }
   }
+
+  componentDidMount() {
+    fetch("http://127.0.0.1:3001/getblogs")
+      .then((response) => response.json())
+      .then(
+        (result) => {
+          this.setState({            
+            blogs: result,
+          });
+        },
+        (error) => {
+          this.setState({            
+            error,
+          });
+        }
+      );
+  }
+
   render() {
     return (
       <div>
@@ -72,8 +106,22 @@ class App extends React.Component {
           >
             See all Posts
           </span>
-          <span className="nav-unselected">Write a Post</span>
-          <span className="nav-unselected">Admin</span>
+          <span
+            className={
+              this.state.view === "PostBlog" ? "nav-selected" : "nav-unselected"
+            }
+            onClick={() => this.changeView("PostBlog")}
+          >
+            Write a Post
+          </span>
+          <span
+            className={
+              this.state.view === "Admin" ? "nav-selected" : "nav-unselected"
+            }
+            onClick={() => this.changeView("Admin")}
+          >
+            Admin
+          </span>
         </div>
 
         <div className="main">{this.renderView()}</div>

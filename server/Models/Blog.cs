@@ -1,10 +1,17 @@
-using System;
-using System.Text.Json;
 
-namespace server
+using System;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace server.Models
 {
     public class Blog
-    {
+
+    {   
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string _id { get; set; }
+
         public DateTime createdAt { get; set; }
 
         public int views { get; set; }
@@ -17,12 +24,12 @@ namespace server
 
         public string title { get; set; }
 
-        public string _id { get; set; }
+        
 
-        public override string ToString()
+        /* public override string ToString()
         {
             return JsonSerializer.Serialize(this);
-        }
+        } */
 
     }
 }
