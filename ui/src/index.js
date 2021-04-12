@@ -2,12 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 const connection = `http://localhost:3001/`;
 
 ReactDOM.render(
   <React.StrictMode>
-    <App connection={connection} />
+    <BrowserRouter>
+      <App connection={connection} />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

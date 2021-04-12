@@ -56,7 +56,9 @@ namespace server
 
              services.AddSingleton<DatabaseSettings>(sp =>
                 sp.GetRequiredService<DatabaseSettings>());
+
             services.AddSingleton<IServicesRepository<Blog>, BlogsService>();
+            services.AddSingleton<IServicesRepository<User>, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

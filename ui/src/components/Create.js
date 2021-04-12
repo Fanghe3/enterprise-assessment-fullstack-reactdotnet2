@@ -1,6 +1,7 @@
 import moment, { now } from 'moment';
 import React, { Component } from "react";
- 
+ import { Link } from "react-router-dom";
+import Feed from "./Feed";
 
 export class Create extends Component {
   constructor() {
@@ -18,6 +19,7 @@ export class Create extends Component {
       },
       alert: false,
       alertMessage: "",
+      posted: false,
     };
   }
 
@@ -35,6 +37,8 @@ export class Create extends Component {
     this.setState({
       // seller: this.props.currentUser,
       post: postState,
+      
+
     });
   };
 
@@ -42,6 +46,7 @@ export class Create extends Component {
     event.preventDefault();
     var badVin = "";
     this.setState({
+      posted : true,
       alertMessage: badVin
         ? "VIN is not valid"
         : "We are not accepting vehicles of this type at the moment",
@@ -49,6 +54,8 @@ export class Create extends Component {
     });
 
     this.addPost(this.state.post);
+
+   
   };
 
   addPost = (post) => {
@@ -66,60 +73,66 @@ export class Create extends Component {
     return response;
   };
 
-  render() {
-    return (
-      <div class="create">
-        <div class="create-editor">
-          <h2>AUTHOR</h2>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              class="create-input"
-              type="text"
-              name="title"
-              placeholder="Post Title"
-              onChange={this.handleChange}
-            ></input>
-            <input
-              class="create-input"
-              type="text"
-              name="author"
-              placeholder="Author"
-              onChange={this.handleChange}
-            ></input>
-            <input
-              class="create-input"
-              type="text"
-              name="image"
-              placeholder="Image URL"
-              onChange={this.handleChange}
-            ></input>
-            <textarea
-              class="create-body-textarea"
-              name="body"
-              placeholder="Post Body"
-              onChange={this.handleChange}
-            ></textarea>
-            <button class="create-submit-button" type="submit">
+  render() { return this.state.posted ? (
+    <Feed blogs={this.props.blogs} handleClick={this.props.handleClick}></Feed>
+  ) : (
+    <div class="create">
+      <div class="create-editor">
+        <h2>AUTHOR</h2>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            class="create-input"
+            type="text"
+            name="title"
+            placeholder="Post Title"
+            onChange={this.handleChange}
+          ></input>
+          <input
+            class="create-input"
+            type="text"
+            name="author"
+            placeholder="Author"
+            onChange={this.handleChange}
+          ></input>
+          <input
+            class="create-input"
+            type="text"
+            name="image"
+            placeholder="Image URL"
+            onChange={this.handleChange}
+          ></input>
+          <textarea
+            class="create-body-textarea"
+            name="body"
+            placeholder="Post Body"
+            onChange={this.handleChange}
+          ></textarea>
+          <div>
+            <button
+              lass="create-submit-button"
+              type="submit"
+              onClick={this.handleSubmit}
+              block
+            >
               Save post
             </button>
-          </form>
-        </div>
-        <div class="create-preview">
-          <h2>PREVIEW</h2>
-          <div className="post">
-            <h1 className="post-title"> {this.state.post.title} </h1>
-            <div className="post-byline">
-              {" "}
-              <span className="post-byline-author">
-                {this.state.post.author}
-              </span>{" "}
-              {moment(this.state.post.createdAt, "YYYYMMDD").fromNow()}
-            </div>
-            <img src={this.state.post.imageUrl} className="post-image" alt="" />
-            <p>{this.state.post.body} </p>
           </div>
+          <br></br>
+        </form>
+      </div>
+      <div class="create-preview">
+        <h2>PREVIEW</h2>
+        <div className="post">
+          <h1 className="post-title"> {this.state.post.title} </h1>
+          <div className="post-byline">
+            <span className="post-byline-author">{this.state.post.author}</span>
+            {moment(this.state.post.createdAt, "YYYYMMDD").fromNow()}
+          </div>
+          <img src={this.state.post.imageUrl} className="post-image" alt="" />
+          <p>{this.state.post.body} </p>
         </div>
       </div>
-    );
+    </div>
+  );
   }
 }

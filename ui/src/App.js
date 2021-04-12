@@ -4,6 +4,9 @@ import Post from "./components/Post";
 import Feed from "./components/Feed";
 import { Create } from "./components/Create";
 import Admin from "./components/Admin";
+import {Registration } from "./components/Registration";
+import Login  from "./components/Login";
+import { Route,  Switch } from "react-router-dom";
 /*
   READ THESE COMMENTS AS A PART OF STEP TWO
 
@@ -34,10 +37,11 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      view: "feed",
+      view: "login",
       selectedItem: 0,
       blogs: [],
-      error: null
+      users: [],
+      error: null,
     };
 
     this.changeView = this.changeView.bind(this);
@@ -47,7 +51,10 @@ class App extends React.Component {
       this.setState({
         view: option,
         selectedItem:
-          option === "feed" || option === "Create" || option === "Admin"
+          option === "feed" ||
+          option === "Create" ||
+          option === "Admin" ||
+          option === "Login"
             ? 0
             : e.currentTarget.parentNode.id,
       });
@@ -72,13 +79,37 @@ class App extends React.Component {
     if (view === "Admin") {
       return <Admin blogs={this.state.blogs}  />;
     }
-    if (view === "Create") {
-
-      console.log("connection", this.props.connection);
+    if (view === "Create") {      
       return (
-        <Create blogs={this.state.blogs} connection={this.props.connection} />
+        <Create
+          blogs={this.state.blogs}
+          connection={this.props.connection}
+          handleClick={(event) => {
+            this.changeView("onePost", event);
+          }}
+        />
       );
     }
+    if (view === "Registration") {
+       return (
+         <Registration
+           blogs={this.state.blogs}
+           connection={this.props.connection}
+         />
+       );
+     }
+     if (view === "Login") {
+       return (
+         <Login
+           users={this.state.users}
+           connection={this.props.connection}
+         />
+       
+       );
+
+
+
+     }
   }
 
   componentDidMount() {
@@ -96,6 +127,21 @@ class App extends React.Component {
           });
         }
       );
+
+     fetch(`${this.props.connection}getusers`)
+       .then((response) => response.json())
+       .then(
+         (result) => {
+           this.setState({
+             users: result,
+           });
+         },
+         (error) => {
+           this.setState({
+             error,
+           });
+         }
+       ); 
   }
 
   render() {
@@ -104,6 +150,14 @@ class App extends React.Component {
         <div className="nav">
           <span className="logo" onClick={() => this.changeView("feed")}>
             BLOGMODO
+          </span>
+          <span
+            className={
+              this.state.view === "Login" ? "nav-selected" : "nav-unselected"
+            }
+            onClick={() => this.changeView("Login")}
+          >
+            Login
           </span>
           <span
             className={
